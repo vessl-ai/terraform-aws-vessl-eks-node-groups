@@ -4,6 +4,9 @@ variable "cluster_endpoint" {}
 variable "cluster_certificate_authority_data" {}
 variable "security_group_ids" {}
 
+variable "manager_node_count" {
+  default = 2
+}
 variable "manager_node_ami_id" {}
 variable "manager_node_instance_type" {}
 variable "manager_node_disk_size" {}

@@ -107,9 +107,9 @@ module "manager_node_group" {
   // Without it, the security groups of the nodes are empty and thus won't join the cluster.
   vpc_security_group_ids = var.security_group_ids
 
-  min_size     = 1
-  max_size     = 1
-  desired_size = 1
+  min_size     = var.manager_node_count
+  max_size     = var.manager_node_count
+  desired_size = var.manager_node_count
 
   block_device_mappings = {
     xvda = {
