@@ -16,7 +16,7 @@ module "worker_node_groups" {
   bootstrap_extra_args = join(" ", [
     "--kubelet-extra-args",
     "'",
-    length(try(each.value["node_template_labels"], {})) == 0 ? "--node-labels=app.vessl.ai/managed=true" : "--node-labels=app.vessl.ai/managed=true,${join(",", [for k, v in each.value["node_template_labels"] : "${k}=${v}"])}",
+    length(try(each.value["node_template_labels"], {})) == 0 ? "--node-labels=v1.k8s.vessl.ai/managed=true" : "--node-labels=v1.k8s.vessl.ai/managed=true,${join(",", [for k, v in each.value["node_template_labels"] : "${k}=${v}"])}",
     length(try(each.value["taints"], [])) == 0 ? "" : "--register-with-taints=${join(",", each.value["taints"])}",
     "'",
   ])
@@ -88,8 +88,8 @@ module "manager_node_group" {
   bootstrap_extra_args = join(" ", [
     "--kubelet-extra-args",
     "'",
-    "--node-labels=app.vessl.ai/managed=true,app.vessl.ai/dedicated=manager",
-    "--register-with-taints=app.vessl.ai/dedicated=manager:NoSchedule",
+    "--node-labels=v1.k8s.vessl.ai/managed=true,v1.k8s.vessl.ai/dedicated=manager",
+    "--register-with-taints=v1.k8s.vessl.ai/dedicated=manager:NoSchedule",
     "'",
   ])
 
