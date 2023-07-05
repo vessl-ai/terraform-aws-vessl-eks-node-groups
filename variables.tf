@@ -3,6 +3,7 @@ variable "cluster_version" {}
 variable "cluster_endpoint" {}
 variable "cluster_certificate_authority_data" {}
 variable "security_group_ids" {}
+variable "vpc_id" {}
 
 variable "manager_node_count" {
   default = 2
