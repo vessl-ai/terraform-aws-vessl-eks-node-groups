@@ -4,15 +4,21 @@ data "aws_region" "current" {}
 # EKS self-managed node groups
 # ----------------------------
 module "worker_node_groups" {
-  source = "terraform-aws-modules/eks/aws//modules/self-managed-node-group"
+  source  = "terraform-aws-modules/eks/aws//modules/self-managed-node-group"
   version = "19.15.3"
 
   for_each = var.self_managed_node_groups_data
 
   name                 = each.key
+  iam_role_name        = each.key
   launch_template_name = each.key
-  ami_id               = each.value["ami_id"]
-  instance_type        = each.value["instance_type"]
+
+  use_name_prefix                 = false
+  iam_role_use_name_prefix        = false
+  launch_template_use_name_prefix = false
+
+  ami_id        = each.value["ami_id"]
+  instance_type = each.value["instance_type"]
   bootstrap_extra_args = join(" ", [
     "--kubelet-extra-args",
     "'",
@@ -43,10 +49,10 @@ module "worker_node_groups" {
   # https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#how-can-i-scale-a-node-group-to-0
   autoscaling_group_tags = merge(
     {
-      for k, v in try(each.value["node_template_labels"], {}): "k8s.io/cluster-autoscaler/node-template/label/${k}" => v
+      for k, v in try(each.value["node_template_labels"], {}) : "k8s.io/cluster-autoscaler/node-template/label/${k}" => v
     },
     {
-      for k, v in try(each.value["node_template_resources"], {}): "k8s.io/cluster-autoscaler/node-template/resources/${k}" => v
+      for k, v in try(each.value["node_template_resources"], {}) : "k8s.io/cluster-autoscaler/node-template/resources/${k}" => v
     },
     {
       "k8s.io/cluster-autoscaler/enabled" : true,
@@ -78,13 +84,19 @@ module "worker_node_groups" {
 }
 
 module "manager_node_group" {
-  source = "terraform-aws-modules/eks/aws//modules/self-managed-node-group"
+  source  = "terraform-aws-modules/eks/aws//modules/self-managed-node-group"
   version = "19.15.3"
 
   name                 = "${var.cluster_name}-manager-node-group"
+  iam_role_name        = "${var.cluster_name}-manager-node-group"
   launch_template_name = "${var.cluster_name}-manager-node-group"
-  ami_id               = var.manager_node_ami_id
-  instance_type        = var.manager_node_instance_type
+
+  use_name_prefix                 = false
+  iam_role_use_name_prefix        = false
+  launch_template_use_name_prefix = false
+
+  ami_id        = var.manager_node_ami_id
+  instance_type = var.manager_node_instance_type
   bootstrap_extra_args = join(" ", [
     "--kubelet-extra-args",
     "'",
