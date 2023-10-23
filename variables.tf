@@ -28,4 +28,6 @@ variable "self_managed_node_groups_data" {
 }
 
 variable "iam_instance_profile_arn" {}
-variable "tags" {}
+variable "tags" {
+  default = {}
+}
