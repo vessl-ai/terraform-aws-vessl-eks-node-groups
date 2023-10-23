@@ -1,8 +1,18 @@
-variable "cluster_name" {}
-variable "cluster_version" {}
-variable "cluster_endpoint" {}
-variable "cluster_certificate_authority_data" {}
-variable "security_group_ids" {}
+variable "cluster_name" {
+  description = "The name of the EKS cluster (module.eks.cluster_name)"
+}
+variable "cluster_version" {
+  description = "The Kubernetes version of the EKS cluster (module.eks.cluster_version)"
+}
+variable "cluster_endpoint" {
+  description = "The endpoint of the EKS cluster (module.eks.cluster_endpoint)"
+}
+variable "cluster_certificate_authority_data" {
+  description = "The certificate-authority-data for the EKS cluster (module.eks.cluster_certificate_authority_data)"
+}
+variable "security_group_ids" {
+  description = "The security groups which the nodes will belong to"
+}
 variable "vpc_id" {}
 
 variable "manager_node_count" {
