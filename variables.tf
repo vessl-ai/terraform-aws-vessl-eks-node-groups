@@ -17,6 +17,7 @@ variable "vpc_id" {}
 
 variable "key_name" {
   description = "The name of the key pair to use for SSH access to the nodes"
+  default     = null
 }
 
 variable "manager_node_count" {
