@@ -15,6 +15,10 @@ variable "security_group_ids" {
 }
 variable "vpc_id" {}
 
+variable "key_name" {
+  description = "The name of the key pair to use for SSH access to the nodes"
+}
+
 variable "manager_node_count" {
   default = 2
 }

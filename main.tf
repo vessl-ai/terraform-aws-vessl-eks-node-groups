@@ -45,6 +45,8 @@ module "worker_node_groups" {
   max_size     = each.value["max_size"]
   desired_size = try(each.value["desired_size"], 0)
 
+  key_name = var.key_name
+
   # Pre-propagate necessary k8s node labels to autoscaling group tags in order to implement scale-to-zero
   # https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#how-can-i-scale-a-node-group-to-0
   autoscaling_group_tags = merge(
@@ -135,6 +137,8 @@ module "manager_node_group" {
       }
     }
   }
+
+  key_name = var.key_name
 
   tags = merge(var.tags, {
     Name = "${var.cluster_name}-manager-node-group"
