@@ -39,7 +39,7 @@ module "worker_node_groups" {
 
   // The following variables are necessary if you decide to use the module outside of the parent EKS module context.
   // Without it, the security groups of the nodes are empty and thus won't join the cluster.
-  vpc_security_group_ids = var.security_group_ids
+  vpc_security_group_ids = concat(var.security_group_ids, [aws_security_group.allow_node_ports.id])
 
   min_size     = each.value["min_size"]
   max_size     = each.value["max_size"]
