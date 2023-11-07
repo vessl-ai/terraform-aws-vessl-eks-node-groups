@@ -78,6 +78,8 @@ module "worker_node_groups" {
     }
   }
 
+  warm_pool = try(each.value["warm_pool"], {})
+
   instance_market_options = try(each.value["instance_market_options"], {})
 
   tags = merge(var.tags, {
