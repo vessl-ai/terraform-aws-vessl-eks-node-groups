@@ -82,7 +82,7 @@ module "worker_node_groups" {
 
   instance_market_options = try(each.value["instance_market_options"], {})
 
-  tags = merge(var.tags, {
+  tags = merge(var.tags, each.value["additional_tags"], {
     Name = each.key
   })
 }
