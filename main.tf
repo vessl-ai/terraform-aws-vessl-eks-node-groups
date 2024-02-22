@@ -34,9 +34,9 @@ module "worker_node_groups" {
 
   subnet_ids = each.value["subnet_ids"]
 
+  create_access_entry         = false
   create_iam_instance_profile = false
   iam_instance_profile_arn    = var.iam_instance_profile_arn
-  iam_role_arn                = var.iam_role_arn
 
   // The following variables are necessary if you decide to use the module outside of the parent EKS module context.
   // Without it, the security groups of the nodes are empty and thus won't join the cluster.
@@ -117,9 +117,9 @@ module "manager_node_group" {
 
   subnet_ids = var.manager_node_subnet_ids
 
+  create_access_entry         = false
   create_iam_instance_profile = false
   iam_instance_profile_arn    = var.iam_instance_profile_arn
-  iam_role_arn                = var.iam_role_arn
 
   // The following variables are necessary if you decide to use the module outside of the parent EKS module context.
   // Without it, the security groups of the nodes are empty and thus won't join the cluster.
@@ -147,4 +147,12 @@ module "manager_node_group" {
   tags = merge(var.tags, {
     Name = "${var.cluster_name}-manager-node-group"
   })
+}
+
+resource "aws_eks_access_entry" "node" {
+  cluster_name  = var.cluster_name
+  principal_arn = var.iam_role_arn
+  type          = "EC2_LINUX"
+
+  tags = var.tags
 }
