@@ -36,6 +36,7 @@ module "worker_node_groups" {
 
   create_iam_instance_profile = false
   iam_instance_profile_arn    = var.iam_instance_profile_arn
+  iam_role_arn                = var.iam_role_arn
 
   // The following variables are necessary if you decide to use the module outside of the parent EKS module context.
   // Without it, the security groups of the nodes are empty and thus won't join the cluster.
