@@ -23,7 +23,7 @@ module "worker_node_groups" {
     "--kubelet-extra-args",
     "'",
     length(try(each.value["node_template_labels"], {})) == 0 ? "--node-labels=v1.k8s.vessl.ai/managed=true" : "--node-labels=v1.k8s.vessl.ai/managed=true,${join(",", [for k, v in each.value["node_template_labels"] : "${k}=${v}"])}",
-    length(try(each.value["taints"], [])) == 0 ? "" : "--register-with-taints=${join(",", each.value["taints"])}",
+    length(try(each.value["node_template_taints"], [])) == 0 ? "" : "--register-with-taints=${join(",", each.value["node_template_taints"])}",
     "'",
   ])
 
@@ -57,6 +57,9 @@ module "worker_node_groups" {
     },
     {
       for k, v in try(each.value["node_template_resources"], {}) : "k8s.io/cluster-autoscaler/node-template/resources/${k}" => v
+    },
+    {
+      for k, v in try(each.value["node_template_taints"], {}) : "k8s.io/cluster-autoscaler/node-template/taint/${k}" => v
     },
     {
       "k8s.io/cluster-autoscaler/enabled" : true,
