@@ -59,6 +59,9 @@ module "worker_node_groups" {
       for k, v in try(each.value["node_template_resources"], {}) : "k8s.io/cluster-autoscaler/node-template/resources/${k}" => v
     },
     {
+      for k, v in try(each.value["node_template_taints"], {}) : "k8s.io/cluster-autoscaler/node-template/taint/${k}" => v
+    },
+    {
       "k8s.io/cluster-autoscaler/enabled" : true,
       "k8s.io/cluster-autoscaler/${var.cluster_name}" : "owned",
       "k8s.io/cluster-autoscaler/node-template/label/topology.kubernetes.io/region"    = data.aws_region.current.name
