@@ -27,10 +27,11 @@ module "worker_node_groups" {
     "'",
   ])
 
-  cluster_name        = var.cluster_name
-  cluster_version     = var.cluster_version
-  cluster_endpoint    = var.cluster_endpoint
-  cluster_auth_base64 = var.cluster_certificate_authority_data
+  cluster_name         = var.cluster_name
+  cluster_version      = var.cluster_version
+  cluster_endpoint     = var.cluster_endpoint
+  cluster_auth_base64  = var.cluster_certificate_authority_data
+  cluster_service_cidr = var.cluster_service_cidr
 
   subnet_ids = each.value["subnet_ids"]
 
@@ -112,10 +113,11 @@ module "manager_node_group" {
     "'",
   ])
 
-  cluster_name        = var.cluster_name
-  cluster_version     = var.cluster_version
-  cluster_endpoint    = var.cluster_endpoint
-  cluster_auth_base64 = var.cluster_certificate_authority_data
+  cluster_name         = var.cluster_name
+  cluster_version      = var.cluster_version
+  cluster_endpoint     = var.cluster_endpoint
+  cluster_auth_base64  = var.cluster_certificate_authority_data
+  cluster_service_cidr = var.cluster_service_cidr
 
   subnet_ids = var.manager_node_subnet_ids
 

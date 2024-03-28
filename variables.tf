@@ -10,6 +10,7 @@ variable "cluster_endpoint" {
 variable "cluster_certificate_authority_data" {
   description = "The certificate-authority-data for the EKS cluster (module.eks.cluster_certificate_authority_data)"
 }
+variable "cluster_service_cidr" {}
 variable "security_group_ids" {
   description = "The security groups which the nodes will belong to"
 }
