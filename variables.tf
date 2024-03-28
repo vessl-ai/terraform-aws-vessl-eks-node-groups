@@ -23,10 +23,18 @@ variable "key_name" {
 variable "manager_node_count" {
   default = 2
 }
-variable "manager_node_ami_id" {}
-variable "manager_node_instance_type" {}
-variable "manager_node_disk_size" {}
-variable "manager_node_subnet_ids" {}
+variable "manager_node_ami_id" {
+  default = ""
+}
+variable "manager_node_instance_type" {
+  default = "m7i.large"
+}
+variable "manager_node_disk_size" {
+  default = 500
+}
+variable "manager_node_subnet_ids" {
+  default = []
+}
 
 variable "self_managed_node_groups_data" {
   default = {}
