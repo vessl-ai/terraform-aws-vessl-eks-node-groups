@@ -13,10 +13,6 @@ module "worker_node_groups" {
   iam_role_name        = each.key
   launch_template_name = each.key
 
-  use_name_prefix                 = false
-  iam_role_use_name_prefix        = false
-  launch_template_use_name_prefix = false
-
   ami_id        = each.value["ami_id"]
   instance_type = each.value["instance_type"]
   bootstrap_extra_args = join(" ", [
@@ -101,10 +97,6 @@ module "manager_node_group" {
   name                 = "${var.cluster_name}-manager-node-group"
   iam_role_name        = "${var.cluster_name}-manager-node-group"
   launch_template_name = "${var.cluster_name}-manager-node-group"
-
-  use_name_prefix                 = false
-  iam_role_use_name_prefix        = false
-  launch_template_use_name_prefix = false
 
   ami_id        = var.manager_node_ami_id
   instance_type = var.manager_node_instance_type
