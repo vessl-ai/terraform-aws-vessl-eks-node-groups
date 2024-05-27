@@ -5,7 +5,7 @@ data "aws_region" "current" {}
 # ----------------------------
 module "worker_node_groups" {
   source  = "terraform-aws-modules/eks/aws//modules/self-managed-node-group"
-  version = "20.8.4"
+  version = "20.11.1"
 
   for_each = var.self_managed_node_groups_data
 
@@ -92,7 +92,7 @@ module "manager_node_group" {
   count = var.manager_node_count > 0 ? 1 : 0
 
   source  = "terraform-aws-modules/eks/aws//modules/self-managed-node-group"
-  version = "20.8.4"
+  version = "20.11.1"
 
   name                 = "${var.cluster_name}-manager-node-group"
   iam_role_name        = "${var.cluster_name}-manager-node-group"
