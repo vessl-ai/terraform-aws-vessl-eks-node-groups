@@ -13,13 +13,17 @@ module "worker_node_groups" {
   iam_role_name        = each.key
   launch_template_name = each.key
 
-  ami_id        = each.value["ami_id"]
-  instance_type = each.value["instance_type"]
+  ami_id        = each.value.ami_id
+  instance_type = each.value.instance_type
   bootstrap_extra_args = join(" ", [
     "--kubelet-extra-args",
     "'",
-    length(try(each.value["node_template_labels"], {})) == 0 ? "--node-labels=v1.k8s.vessl.ai/managed=true" : "--node-labels=v1.k8s.vessl.ai/managed=true,${join(",", [for k, v in each.value["node_template_labels"] : "${k}=${v}"])}",
-    length(try(each.value["node_template_taints"], [])) == 0 ? "" : "--register-with-taints=${join(",", [for k, v in each.value["node_template_taints"] : "${k}=${v}"])}",
+    length(each.value.node_template_labels) == 0 ?
+        "--node-labels=v1.k8s.vessl.ai/managed=true" :
+        "--node-labels=v1.k8s.vessl.ai/managed=true,${join(",", [for k, v in each.value.node_template_labels: "${k}=${v}"])}",
+    length(each.value.node_template_taints) == 0 ?
+        "" :
+        "--register-with-taints=${join(",", local.initial_node_taints_in_kubelet_arg_form[each.key])}",
     "'",
   ])
 
@@ -39,9 +43,9 @@ module "worker_node_groups" {
   // Without it, the security groups of the nodes are empty and thus won't join the cluster.
   vpc_security_group_ids = concat(var.security_group_ids, [aws_security_group.allow_node_ports.id])
 
-  min_size     = each.value["min_size"]
-  max_size     = each.value["max_size"]
-  desired_size = try(each.value["desired_size"], 0)
+  min_size     = each.value.min_size
+  max_size     = each.value.max_size
+  desired_size = try(each.value.desired_size, 0)
 
   key_name = var.key_name
 
@@ -49,14 +53,12 @@ module "worker_node_groups" {
   # https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#how-can-i-scale-a-node-group-to-0
   autoscaling_group_tags = merge(
     {
-      for k, v in try(each.value["node_template_labels"], {}) : "k8s.io/cluster-autoscaler/node-template/label/${k}" => v
+      for k, v in each.value.node_template_labels: "k8s.io/cluster-autoscaler/node-template/label/${k}" => v
     },
     {
-      for k, v in try(each.value["node_template_resources"], {}) : "k8s.io/cluster-autoscaler/node-template/resources/${k}" => v
+      for k, v in each.value.node_template_resources: "k8s.io/cluster-autoscaler/node-template/resources/${k}" => v
     },
-    {
-      for k, v in try(each.value["node_template_taints"], {}) : "k8s.io/cluster-autoscaler/node-template/taint/${k}" => v
-    },
+    local.persistent_node_taints_in_cluster_autoscaler_asg_tag_form[each.key],
     {
       "k8s.io/cluster-autoscaler/enabled" : true,
       "k8s.io/cluster-autoscaler/${var.cluster_name}" : "owned",

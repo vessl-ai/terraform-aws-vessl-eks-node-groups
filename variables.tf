@@ -38,6 +38,33 @@ variable "manager_node_subnet_ids" {
 }
 
 variable "self_managed_node_groups_data" {
+  type = map(object({
+    ami_id = string
+    instance_type = string
+
+    node_template_labels = optional(map(string), {})
+    node_template_resources = optional(map(string), {})
+    node_template_taints = optional(list(object({
+      key = string
+      value = string
+      effect = string
+
+      // `is_transient` denotes whether this taint will be automatically removed after some time.
+      // Examples of "transient" taints include:
+      //   - initialization flags ("I am not ready, please initialize me")
+      // Examples of "non-transient" (i.e. "persistent") taints include:
+      //   - GPU flags in some configurations
+      //       ("I have a costly resource, so don't schedule pods to me
+      //         unless they specifically tolerated me")
+      // This is required by cluster-autoscaler, because it simulates pod scheduling with hypothetical nodes,
+      // and therefore it has to know whether the taint will eventually go away or not.
+      is_transient = optional(bool, false)
+    })), [])
+
+    min_size = number
+    max_size = number
+    desired_size = number
+  }))
   default = {}
 }
 
