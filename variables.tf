@@ -41,6 +41,14 @@ variable "self_managed_node_groups_data" {
   type = map(object({
     ami_id = string
     instance_type = string
+    availability_zone = string
+    disk_size = number
+    subnet_ids = list(string)
+    node_group_version = optional(string, null)
+
+    min_size = number
+    max_size = number
+    desired_size = number
 
     node_template_labels = optional(map(string), {})
     node_template_resources = optional(map(string), {})
@@ -48,7 +56,6 @@ variable "self_managed_node_groups_data" {
       key = string
       value = string
       effect = string
-
       // `is_transient` denotes whether this taint will be automatically removed after some time.
       // Examples of "transient" taints include:
       //   - initialization flags ("I am not ready, please initialize me")
@@ -61,9 +68,9 @@ variable "self_managed_node_groups_data" {
       is_transient = optional(bool, false)
     })), [])
 
-    min_size = number
-    max_size = number
-    desired_size = number
+    warm_pool = optional(map(any), {})
+    additional_tags = optional(any, {})
+    instance_market_options = optional(any, {})
   }))
   default = {}
 }

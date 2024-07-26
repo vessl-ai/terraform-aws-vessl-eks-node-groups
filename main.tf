@@ -28,7 +28,7 @@ module "worker_node_groups" {
   ])
 
   cluster_name         = var.cluster_name
-  cluster_version      = try(each.value["node_group_version"], var.cluster_version)
+  cluster_version      = (each.value.node_group_version == null ? var.cluster_version : each.value.node_group_version)
   cluster_endpoint     = var.cluster_endpoint
   cluster_auth_base64  = var.cluster_certificate_authority_data
   cluster_service_cidr = var.cluster_service_cidr
@@ -63,8 +63,8 @@ module "worker_node_groups" {
       "k8s.io/cluster-autoscaler/enabled" : true,
       "k8s.io/cluster-autoscaler/${var.cluster_name}" : "owned",
       "k8s.io/cluster-autoscaler/node-template/label/topology.kubernetes.io/region"    = data.aws_region.current.name
-      "k8s.io/cluster-autoscaler/node-template/label/topology.kubernetes.io/zone"      = each.value["availability_zone"]
-      "k8s.io/cluster-autoscaler/node-template/label/node.kubernetes.io/instance-type" = each.value["instance_type"]
+      "k8s.io/cluster-autoscaler/node-template/label/topology.kubernetes.io/zone"      = each.value.availability_zone
+      "k8s.io/cluster-autoscaler/node-template/label/node.kubernetes.io/instance-type" = each.value.instance_type
     },
   )
 
@@ -72,7 +72,7 @@ module "worker_node_groups" {
     xvda = {
       device_name = "/dev/xvda"
       ebs = {
-        volume_size           = each.value["disk_size"]
+        volume_size           = each.value.disk_size
         volume_type           = "gp3"
         iops                  = 3000 # Baseline
         throughput            = 125  # Baseline
@@ -81,11 +81,11 @@ module "worker_node_groups" {
     }
   }
 
-  warm_pool = try(each.value["warm_pool"], {})
+  warm_pool = each.value.warm_pool
 
-  instance_market_options = try(each.value["instance_market_options"], {})
+  instance_market_options = each.value.instance_market_options
 
-  tags = merge(var.tags, each.value["additional_tags"], {
+  tags = merge(var.tags, each.value.additional_tags, {
     Name = each.key
   })
 }
