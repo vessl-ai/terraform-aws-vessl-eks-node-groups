@@ -23,7 +23,7 @@ module "worker_node_groups" {
         "--node-labels=v1.k8s.vessl.ai/managed=true,${join(",", [for k, v in each.value.node_template_labels: "${k}=${v}"])}",
     length(each.value.node_template_taints) == 0 ?
         "" :
-        "--register-with-taints=${join(",", local.initial_node_taints_in_kubelet_arg_form[each.key])}",
+        "--register-with-taints=${join(",", local.node_taints_in_kubelet_arg_form[each.key])}",
     "'",
   ])
 
@@ -58,7 +58,7 @@ module "worker_node_groups" {
     {
       for k, v in each.value.node_template_resources: "k8s.io/cluster-autoscaler/node-template/resources/${k}" => v
     },
-    local.persistent_node_taints_in_cluster_autoscaler_asg_tag_form[each.key],
+    local.node_taints_in_cluster_autoscaler_asg_tag_form[each.key],
     {
       "k8s.io/cluster-autoscaler/enabled" : true,
       "k8s.io/cluster-autoscaler/${var.cluster_name}" : "owned",
