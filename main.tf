@@ -145,6 +145,16 @@ module "manager_node_group" {
 
   key_name = var.key_name
 
+  autoscaling_group_tags = merge(
+    {
+      "k8s.io/cluster-autoscaler/enabled" : true,
+      "k8s.io/cluster-autoscaler/${var.cluster_name}" : "owned",
+      "k8s.io/cluster-autoscaler/node-template/label/v1.k8s.vessl.ai/managed" : "true",
+      "k8s.io/cluster-autoscaler/node-template/label/v1.k8s.vessl.ai/dedicated" : "manager",
+      "k8s.io/cluster-autoscaler/node-template/taint/v1.k8s.vessl.ai/dedicated" : "manager:NoSchedule",
+    },
+  )
+
   tags = merge(var.tags, {
     Name = "${var.cluster_name}-manager-node-group"
   })
